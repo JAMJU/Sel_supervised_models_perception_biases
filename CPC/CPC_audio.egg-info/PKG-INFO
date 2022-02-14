@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: CPC-audio
+Version: 1.0
+Summary: An implementation of the contrast predictive coding (CPC) training method for audio data.
+Home-page: UNKNOWN
+Author: Facebook AI Research
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering
+Classifier: Programming Language :: Python
+License-File: LICENSE
+
+UNKNOWN
+
