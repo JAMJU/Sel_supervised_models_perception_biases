@@ -66,11 +66,13 @@ if __name__ == '__main__':
                         help='layer wanted, only for neural network model')
     parser.add_argument('distance', metavar='f_do', type=str,
                         help='distance wanted')
+    parser.add_argument('path_to_general_folder', metavar='f_do', type=str,
+                        help='distance wanted')
     args = parser.parse_args()
 
     triplet_file = 'triplet_data.csv'#'/home/juliette/Documents/Thèse/Code/vowel_test/dataset_cleaned/all_triplets_list.csv'
    # triphone_file = 'all_cleaned.csv'#'/home/juliette/Documents/Thèse/Code/vowel_test/dataset_cleaned/all_all_item.csv'
-    path_to_scratch = "/gpfsscratch/rech/tub/uzz69cv/transfo_perceptimatic"
+    path_to_scratch = args.path_to_general_folder
     wav2vec_french_path = os.path.join(path_to_scratch, 'wav2vec_french', args.layer)
     wav2vec_english_path = os.path.join(path_to_scratch, 'wav2vec_english', args.layer)
     wav2vec_audioset_path = os.path.join(path_to_scratch, 'wav2vec_audioset', args.layer)

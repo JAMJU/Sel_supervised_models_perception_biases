@@ -19,35 +19,28 @@ from statsmodels.formula.api import probit
 from sampling import get_dico_corres_file, sample_lines
 
 
-def model_probit_binarized(data_file,  model, lines_sampled): # for the model, you have to add the +
-    #print(lines_sampled)
+def model_probit_binarized(data_file,  model, lines_sampled):
     data_ = pd.read_csv(data_file, sep=',', encoding='utf-8')
-    #data_['inverted_gamma'] = 1./data_['gamma_value']
 
     data_['bin_user_ans'] = (data_['bin_user_ans'] + 1.) / 2  # we transform -1 1 into 0 1
     data_['TGT_first'] = data_['TGT_first'].astype(bool)
     data_['TGT_first_code'] = data_['TGT_first'].astype(int)
-    #print(data_['TGT_first_code'])
-    #data_['english'] = 1 - data_['']
-    #data_['french'] = data_['language_indiv_code']
 
     nb_lines = len(data_)
     all_lines = list(range(nb_lines))
-    #line_not_sampled = list(set(all_lines) - set(lines_sampled))
 
     data = data_.iloc[lines_sampled]
+
     # we normalize data
     for val in ['nb_stimuli'] + [mod.replace(' ', '')  for mod in model.split('+')]:
         data[val] = (data[val] -data[val].mean())/data[val].std()
-    model_probit = probit("bin_user_ans ~ TGT_first_code + C(subject_id) + C(dataset) + nb_stimuli + " + model, data) #
-    #result_probit = model_probit.fit(max_iter=100, disp=True)
+
+    # we create the probit model
+    model_probit = probit("bin_user_ans ~ TGT_first_code + C(subject_id) + C(dataset) + nb_stimuli + " + model, data)
     try:
         result_probit = model_probit.fit_regularized(max_iter=200, disp=True)
-        #predictions = result_probit.predict(exog=to_test, linear = False)
-        #real_label = to_test['binarized_answer']
-        #auc_score = roc_auc_score(y_true=real_label.to_numpy(), y_score=predictions.to_numpy())
-        #print(model_probit.loglike(result_probit.params))
-        return model_probit.loglike(result_probit.params)#, auc_score
+
+        return model_probit.loglike(result_probit.params)
     except:
         return 'None'
 
@@ -58,13 +51,11 @@ def func_to_parallel(args):
     file_humans = args[3]
     list_sampled = sample_lines(dico_lines)
     list_log = [str(it)]
-    #list_auc = []
     for mod in list_names:
         print(mod)
         log= model_probit_binarized(data_file=file_humans, model=mod,
                                                  lines_sampled=list_sampled)
         list_log.append(str(log))
-        #list_auc.append(str(auc_result))
     return list_log
 
 
@@ -104,12 +95,6 @@ def iteration_model(filename, nb_it, outfile, french = True, english = True):
                 out.write(','.join(li))
                 out.write('\n')
                 out.close()
-    """for it in range(nb_it):
-        line = func_to_parallel([dico_lines, list_names, it, filename])
-        out = open(outfile, 'a')
-        out.write(','.join(line))
-        out.write('\n')
-        out.close()"""
 
 
 
@@ -136,5 +121,4 @@ if __name__ == '__main__':
     en = True if args.english == 'True' else False
     print('french', fr,'english', en)
 
-    iteration_model(filename=args.file_humans, nb_it=args.nb_it, outfile=args.outfile, french=fr, english=en)
-    #get_ROC_average(couples)
+    iteration_model(filename=args.file_humans, nb_it=int(args.nb_it), outfile=args.outfile, french=fr, english=en)

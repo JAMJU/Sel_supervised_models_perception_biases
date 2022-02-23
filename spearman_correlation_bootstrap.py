@@ -37,14 +37,10 @@ def get_power(f):
 
 def get_spearman_phone(df_english, df_french, value_evaluated):
 
-    #df = pd.read_csv(filename_data, delimiter = ',')
 
     # We separate participants
-    #df_french = df[df['language_indiv'] == 'french']
-    #df_english = df[df['language_indiv'] == 'english']
     all_values = []
     for dff in [df_french, df_english]:
-        #print(dff['subject_language'].iloc[0])
         # We get only what we need
         dff = dff[['triplet_id', 'phone_TGT', 'phone_OTH', 'prev_phone', 'next_phone', 'language_OTH','language_TGT', 'dataset','user_ans', value_evaluated]]
 
@@ -53,10 +49,7 @@ def get_spearman_phone(df_english, df_french, value_evaluated):
                                                                      dff['dataset'] == "WorldVowels", ['user_ans']] / 3.
         dff.loc[dff['dataset'] == "zerospeech", ['user_ans']] = dff.loc[
                                                                     dff['dataset'] == "zerospeech", ['user_ans']] / 3.
-        #print(dff[0:10])
-        #print(dff['user_ans'])
-        #dff.loc[value_evaluated] = dff[value_evaluated].astype(float)
-        #dff.loc['user_ans'] = dff['user_ans'].astype(float)
+
 
 
         # We average over triplet first
@@ -84,10 +77,8 @@ def get_spearman_phone(df_english, df_french, value_evaluated):
         res['language_OTH'] = ans_fr['language_TGT']
         res['language_TGT'] = ans_fr['language_OTH']
 
-        #print('ANS_FR###',ans_fr)
-        #print('res', res)
+
         total = pd.concat([ans_fr, res], axis=0, )
-        #print('TOTAL#####', total)
         gf = total.groupby(['phone_TGT', 'phone_OTH', 'language_OTH','language_TGT', 'dataset'], as_index=False)
         ans_fr = gf.user_ans.mean()
         val_fr = gf[value_evaluated].mean()
@@ -110,12 +101,13 @@ def func_to_parallelize(args):
     list_sampled_english = sample_lines(dico_lines_english)
     list_res_french = [str(it)]
     list_res_english = [str(it)]
+
+    # we iterate over models
     for mod in list_names:
-        # print(mod)
         corrs = get_spearman_phone(df_english=data.iloc[list_sampled_english], df_french=data.iloc[list_sampled_french],
                                    value_evaluated=mod)
-        list_res_french.append(str(corrs[0][0]))  # ([str(corrs[0][0]), str(corrs[0][1])])
-        list_res_english.append(str(corrs[1][0]))  # ([str(corrs[1][0]), str(corrs[1][1])])
+        list_res_french.append(str(corrs[0][0]))
+        list_res_english.append(str(corrs[1][0]))
     return list_res_french, list_res_english
 
 def iteration_function(filename, nb_it, outfile):
@@ -146,8 +138,8 @@ def iteration_function(filename, nb_it, outfile):
             lines = p.map(func_to_parallelize, [[dico_lines_french, dico_lines_english, list_names,k * int(nb) + i, data] for i in range(int(nb))])
             for li in lines:
                 french, english = li
-                out_french = open(outfile + '_frenchpretrained.csv', 'a')
-                out_english = open(outfile + '_englishpretrained.csv', 'a')
+                out_french = open(outfile + '_french.csv', 'a')
+                out_english = open(outfile + '_english.csv', 'a')
                 out_french.write(','.join(french))
                 out_english.write(','.join(english))
                 out_french.write('\n')
@@ -165,11 +157,15 @@ if __name__ == '__main__':
         description='script to compute cor')
     parser.add_argument('file', metavar='f_do', type=str,
                         help='model')
+    parser.add_argument('beg_file_out', metavar='f_do', type=str,
+                        help='beginning out file')
+    parser.add_argument('nb_it', metavar='f_do', type=str,
+                        help='number of iterations')
     args = parser.parse_args()
 
     data_ = args.file
 
-    iteration_function(filename = data_, nb_it = 10000, outfile = 'results_bootstrap/spearman_all')
+    iteration_function(filename = data_, nb_it = int(args.nb_it), outfile = args.beg_file_out)
 
 
 
