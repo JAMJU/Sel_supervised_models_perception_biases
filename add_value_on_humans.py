@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     #result_path = 'results_acl_paper/'
-    result_path = args.folder_delta_file
+    result_path = args.folder_delta_files
     files_values = [file for file in os.listdir(result_path)]
     file_human = args.human_file
     file_out = args.out_file
