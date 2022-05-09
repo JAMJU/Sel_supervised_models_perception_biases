@@ -70,10 +70,10 @@ if __name__ == '__main__':
                         help='distance wanted')
     args = parser.parse_args()
 
-    triplet_file = 'triplet_data.csv'#'/home/juliette/Documents/Thèse/Code/vowel_test/dataset_cleaned/all_triplets_list.csv'
-   # triphone_file = 'all_cleaned.csv'#'/home/juliette/Documents/Thèse/Code/vowel_test/dataset_cleaned/all_all_item.csv'
+    triplet_file = 'triplet_data.csv'
     path_to_scratch = args.path_to_general_folder
     wav2vec_french_path = os.path.join(path_to_scratch, 'wav2vec_french', args.layer)
+    wav2vec_random_path = os.path.join(path_to_scratch, 'wav2vec_random', args.layer)
     wav2vec_english_path = os.path.join(path_to_scratch, 'wav2vec_english', args.layer)
     wav2vec_audioset_path = os.path.join(path_to_scratch, 'wav2vec_audioset', args.layer)
     wav2vec_librispeech_path = os.path.join(path_to_scratch, 'wav2vec_en_librispeech', args.layer)
@@ -100,6 +100,8 @@ if __name__ == '__main__':
     wav2vec_french = lambda x: get_triphone_wav2vec(folder_data=wav2vec_french_path, triphone_name=x,
                                                     layer_name=args.layer)
     wav2vec_english = lambda x: get_triphone_wav2vec(folder_data=wav2vec_english_path, triphone_name=x,
+                                                     layer_name=args.layer)
+    wav2vec_random = lambda x: get_triphone_wav2vec(folder_data=wav2vec_random_path, triphone_name=x,
                                                      layer_name=args.layer)
     wav2vec_audioset = lambda x: get_triphone_wav2vec(folder_data=wav2vec_audioset_path, triphone_name=x,
                                                      layer_name=args.layer)
@@ -132,6 +134,8 @@ if __name__ == '__main__':
         func = wav2vec_french
     elif args.model == 'wav2vec_english':
         func = wav2vec_english
+    elif args.model == 'wav2vec_random':
+        func = wav2vec_random
     elif args.model == 'wav2vec_audioset':
         func = wav2vec_audioset
     elif args.model == 'deepspeech_english':
