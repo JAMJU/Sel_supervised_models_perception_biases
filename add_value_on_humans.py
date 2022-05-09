@@ -56,8 +56,8 @@ if __name__ == '__main__':
                         help='folder where the delta files are')
     parser.add_argument('human_file', metavar='f_human', type=str,
                         help='file where the human results are')
-    parser.add_argument('out_file', metavar='f_do', type=int,
-                        help='file produced wh=ith human + delta info')
+    parser.add_argument('out_file', metavar='f_do', type=str,
+                        help='file produced with human + delta info')
 
     args = parser.parse_args()
     #result_path = 'results_acl_paper/'
